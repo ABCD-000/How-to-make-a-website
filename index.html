@@ -427,12 +427,12 @@ function update(){
   
   playerTeam.forEach(p=>{
     const dist=Math.hypot(ball.x-p.x,ball.y-p.y);
-    if(dist<ball.r+20){spike();}
+    if(dist<ball.r+60){spike();}}
   });
   
   oppTeam.forEach(p=>{
     const dist=Math.hypot(ball.x-p.x,ball.y-p.y);
-    if(dist<ball.r+20){
+    if(dist<ball.r+60){
       const ang=Math.atan2(ball.y-p.y,ball.x-p.x);
       ball.dx=Math.cos(ang)*9;ball.dy=-Math.sin(ang)*7+1.5;
     }
