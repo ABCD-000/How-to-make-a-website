@@ -29,7 +29,7 @@
         <details open>
           <summary><strong>1 — Create an HTML file</strong></summary>
           <p>Open Notepad (or your favorite editor). Start with this basic HTML structure:</p>
-          <pre>&lt;!doctype html&gt;
+          <pre>&lt;!doctype html&gt;  
 &lt;html&gt;
   &lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;My Site&lt;/title&gt;&lt;/head&gt;
   &lt;body&gt;&lt;/body&gt;
@@ -244,8 +244,8 @@ body{font-family:Inter,Arial,sans-serif;margin:0;background:var(--bg);color:#0f1
     </section>
 
     <section class="game-maker" id="gameSection">
-      <h2>🎮 Build a Game — Mini Volleyball</h2>
-      <p>Edit the code below to create or modify a simple volleyball game. See your changes live in the preview.</p>
+      <h2>🎮 Build a Game — Platformer Adventure</h2>
+      <p>Edit the code below to create or modify a simple platformer. Jump, collect stars, and reach the finish flag.</p>
       <div class="editors-row">
         <div class="panel">
           <h3>Game HTML</h3>
@@ -253,209 +253,216 @@ body{font-family:Inter,Arial,sans-serif;margin:0;background:var(--bg);color:#0f1
 &lt;html&gt;
   &lt;head&gt;
     &lt;meta charset="utf-8"&gt;
-    &lt;title&gt;Volleyball Legends&lt;/title&gt;
+    &lt;title&gt;Platformer Adventure&lt;/title&gt;
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;canvas id="gameCanvas"&gt;&lt;/canvas&gt;
-    &lt;div id=\"info\"&gt;Click to serve! Rapid clicks spike. Yellow team bottom. Positions: 1,2,3 front row (near net), 4,5,6 back row. First to 25 wins!&lt;/div&gt;
+    &lt;canvas id="gameCanvas" tabindex="0"&gt;&lt;/canvas&gt;
+    &lt;div id="info"&gt;Use Arrow keys or A/D to move, Space to jump. Click the game canvas to focus controls, then collect all volleyballs and reach the green flag. Click after game over to restart.&lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;</textarea>
         </div>
         <div class="panel">
           <h3>Game CSS</h3>
-          <textarea id="gameCssEditor">body{margin:0;padding:0;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#0d2818 0%,#051108 100%)}
-canvas{border:4px solid #ffcc00;background:#1a4d2e;cursor:crosshair;margin-bottom:12px;box-shadow:0 0 20px rgba(255,204,0,0.3)}
-#info{color:#ffcc00;font-size:13px;font-weight:bold;text-align:center;max-width:700px;line-height:1.5}</textarea>
+          <textarea id="gameCssEditor">body{margin:0;padding:0;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(180deg,#09101d 0%,#03101a 100%);color:#e6eefc;font-family:Arial,sans-serif}
+canvas{border:5px solid #50e3c2;background:#071018;box-shadow:0 0 30px rgba(80,227,194,0.25);border-radius:16px;margin-bottom:14px}
+#info{max-width:720px;text-align:center;color:#9be5d4;font-size:14px;line-height:1.6;padding:0 10px}</textarea>
         </div>
         <div class="panel">
           <h3>Game JS</h3>
           <textarea id="gameJsEditor">const c=document.getElementById('gameCanvas');
+c.tabIndex = 0;
+c.style.outline = 'none';
+c.addEventListener('click', ()=> c.focus());
 const ctx=c.getContext('2d');
-c.width=800;c.height=550;
-const NET_Y=c.height/2-10;
+c.width=900; c.height=520;
 
-let ball={x:400,y:150,r:9,dx:0,dy:0};
-let playerTeam=[{x:250,y:380,num:1},{x:400,y:320,num:2},{x:550,y:320,num:3},{x:250,y:480,num:4},{x:400,y:480,num:5},{x:550,y:480,num:6}];
-let oppTeam=[{x:250,y:70,num:1},{x:400,y:130,num:2},{x:550,y:130,num:3},{x:250,y:20,num:4},{x:400,y:20,num:5},{x:550,y:20,num:6}];
-let playerScore=0,oppScore=0;
-let mouseX=400,mouseY=480;
-let selectedPlayer=0;
-let gameState='serve';let servingTeam='player';
-let ballInPlay=false;
-let lastHitTime=0;
+const gravity=0.55;
+const player={x:80,y:420,w:32,h:42,dx:0,dy:0,onGround:false,color:'#61dafb'};
+const platforms=[
+  {x:0,y:490,w:900,h:30},
+  {x:120,y:410,w:180,h:18},
+  {x:360,y:340,w:160,h:18},
+  {x:620,y:300,w:180,h:18},
+  {x:520,y:220,w:120,h:18},
+  {x:243,y:185,w:110,h:18}
+];
+const coins=[
+  {x:200,y:370,collected:false},
+  {x:420,y:310,collected:false},
+  {x:660,y:260,collected:false},
+  {x:300,y:150,collected:false}
+];
+const goal={x:820,y:230,w:40,h:60};
+const keys={left:false,right:false,jump:false};
+let score=0;
+const totalCoins=coins.length;
+let gameState='play';
 
-function drawCourt(){
-  ctx.fillStyle='#1a4d2e';ctx.fillRect(0,0,c.width,c.height);
-  ctx.strokeStyle='#fff';ctx.lineWidth=3;
-  ctx.strokeRect(40,40,c.width-80,c.height-80);
-  ctx.lineWidth=2;
-  ctx.strokeRect(40,40,c.width-80,(c.height-80)/2);
-  ctx.strokeRect(40,40+(c.height-80)/2,c.width-80,(c.height-80)/2);
-  
-  ctx.setLineDash([8,8]);ctx.lineWidth=2;ctx.strokeStyle='rgba(255,255,255,0.4)';
-  ctx.moveTo(40,NET_Y);ctx.lineTo(c.width-40,NET_Y);ctx.stroke();ctx.setLineDash([]);
-  
-  ctx.fillStyle='rgba(255,255,255,0.1)';
-  for(let i=40;i<c.width-40;i+=60)ctx.fillRect(i,NET_Y-4,30,8);
+function clamp(value,min,max){return Math.max(min,Math.min(value,max));}
+
+function drawBackground(){
+  const gradient=ctx.createLinearGradient(0,0,0,c.height);
+  gradient.addColorStop(0,'#071018');
+  gradient.addColorStop(1,'#03101a');
+  ctx.fillStyle=gradient;
+  ctx.fillRect(0,0,c.width,c.height);
 }
 
-function drawTeams(){
-  ctx.fillStyle='#ffcc00';
-  playerTeam.forEach((p,i)=>{
-    ctx.beginPath();ctx.arc(p.x,p.y,20,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#000';ctx.font='bold 14px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(p.num,p.x,p.y);ctx.fillStyle='#ffcc00';
+function drawPlatforms(){
+  ctx.fillStyle='#133b63';
+  platforms.forEach(p=>{
+    ctx.fillRect(p.x,p.y,p.w,p.h);
+    ctx.strokeStyle='rgba(93,215,255,0.3)';
+    ctx.lineWidth=2;
+    ctx.strokeRect(p.x,p.y,p.w,p.h);
   });
-  ctx.fillStyle='#ff6b6b';
-  oppTeam.forEach((p,i)=>{
-    ctx.beginPath();ctx.arc(p.x,p.y,20,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#000';ctx.font='bold 14px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(p.num,p.x,p.y);ctx.fillStyle='#ff6b6b';
+}
+
+function drawCoins(){
+  coins.forEach(coin=>{
+    if(coin.collected) return;
+    ctx.fillStyle='#fafafa';
+    ctx.beginPath();ctx.arc(coin.x,coin.y,12,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#555';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(coin.x,coin.y,10,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(coin.x-9,coin.y);ctx.lineTo(coin.x+9,coin.y);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(coin.x-6,coin.y-6);ctx.quadraticCurveTo(coin.x,coin.y,coin.x+6,coin.y+6);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(coin.x-6,coin.y+6);ctx.quadraticCurveTo(coin.x,coin.y,coin.x+6,coin.y-6);ctx.stroke();
   });
-  ctx.lineWidth=4;ctx.strokeStyle='#ffff00';
-  ctx.beginPath();ctx.arc(playerTeam[selectedPlayer].x,playerTeam[selectedPlayer].y,26,0,Math.PI*2);ctx.stroke();
-  ctx.strokeStyle='rgba(255,255,0,0.4)';ctx.lineWidth=2;
-  ctx.beginPath();ctx.arc(playerTeam[selectedPlayer].x,playerTeam[selectedPlayer].y,32,0,Math.PI*2);ctx.stroke();
 }
 
-function drawBall(){
-  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=1;
-  for(let i=0;i<4;i++){ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r+2+i,0,Math.PI*2);ctx.stroke();}
+function drawGoal(){
+  ctx.fillStyle='#28d773';
+  ctx.fillRect(goal.x,goal.y,goal.w,goal.h);
+  ctx.fillStyle='#0f4f2d';
+  ctx.fillRect(goal.x+12,goal.y-30,16,30);
 }
 
-function drawScore(){
+function drawPlayer(){
+  ctx.fillStyle=player.color;
+  ctx.fillRect(player.x,player.y,player.w,player.h);
+  ctx.fillStyle='#082b3f';
+  ctx.fillRect(player.x+10,player.y+14,12,12);
+  ctx.fillStyle='#f0f7ff';
+  ctx.fillRect(player.x+8,player.y+10,6,6);
+  ctx.fillRect(player.x+18,player.y+10,6,6);
+}
+
+function drawUI(){
+  const boxX = 14;
+  const boxY = 14;
+  const boxW = 260;
+  const boxH = 70;
+  ctx.fillStyle='rgba(5,14,24,0.8)';
+  ctx.fillRect(boxX,boxY,boxW,boxH);
+  ctx.strokeStyle='#50e3c2';ctx.lineWidth=2;
+  ctx.strokeRect(boxX,boxY,boxW,boxH);
+  ctx.fillStyle='#cdebf4';ctx.font='bold 16px Arial';
+  ctx.textAlign='left';
+  ctx.textBaseline='top';
+  ctx.fillText('Volleyballs: '+score+'/'+totalCoins,boxX+10,boxY+10);
+  ctx.fillText('Goal: Reach the flag',boxX+10,boxY+36);
+}
+
+function drawMessage(text){
   ctx.save();
-  ctx.shadowColor='rgba(0,0,0,0.8)';ctx.shadowBlur=8;ctx.shadowOffsetX=2;ctx.shadowOffsetY=2;
-  ctx.fillStyle='#1a1a1a';ctx.fillRect(c.width/2-120,10,240,70);
-  ctx.strokeStyle='#ffcc00';ctx.lineWidth=2;ctx.strokeRect(c.width/2-120,10,240,70);
+  const boxW = 440;
+  const boxH = 120;
+  const boxX = (c.width - boxW) / 2;
+  const boxY = (c.height - boxH) / 2;
+  ctx.fillStyle='rgba(0,0,0,0.85)';
+  ctx.fillRect(boxX, boxY, boxW, boxH);
+  ctx.strokeStyle='#50e3c2';ctx.lineWidth=3;
+  ctx.strokeRect(boxX, boxY, boxW, boxH);
+  ctx.fillStyle='#ffffff';ctx.font='bold 28px Arial';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText(text, c.width/2, boxY + 34);
+
+  const btnW = 240;
+  const btnH = 36;
+  const btnX = c.width/2 - btnW / 2;
+  const btnY = boxY + boxH - btnH - 14;
+  ctx.fillStyle='#50e3c2';
+  ctx.fillRect(btnX, btnY, btnW, btnH);
+  ctx.strokeStyle='#ffffff';ctx.lineWidth=2;
+  ctx.strokeRect(btnX, btnY, btnW, btnH);
+  ctx.fillStyle='#071018';ctx.font='bold 16px Arial';
+  ctx.fillText('Click canvas to restart', c.width/2, btnY + btnH / 2);
   ctx.restore();
-  
-  ctx.fillStyle='#ffcc00';ctx.font='bold 14px Arial';ctx.textAlign='left';ctx.textBaseline='top';
-  ctx.fillText('YOU',c.width/2-110,18);
-  ctx.fillStyle='#ff6b6b';ctx.fillText('OPPONENT',c.width/2+40,18);
-  
-  ctx.fillStyle='#ffcc00';ctx.font='bold 36px Arial';ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText(playerScore,c.width/2-40,32);
-  ctx.fillStyle='#888';ctx.font='bold 28px Arial';
-  ctx.fillText(':',c.width/2,40);
-  ctx.fillStyle='#ff6b6b';ctx.font='bold 36px Arial';
-  ctx.fillText(oppScore,c.width/2+50,32);
-  
-  if(gameState==='serve'){
-    ctx.save();ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=6;
-    ctx.fillStyle=servingTeam==='player'?'#ffcc00':'#ff6b6b';
-    ctx.font='bold 16px Arial';ctx.textAlign='center';
-    const servText=servingTeam==='player'?'🟡 YOUR SERVE':'🔴 OPPONENT SERVES';
-    ctx.fillText(servText,c.width/2,c.height-55);
-    ctx.restore();
-  }
-  
-  const winn=playerScore>=25?'⭐ YOU WIN! ⭐':oppScore>=25?'💔 YOU LOSE':''; 
-  if(winn){
-    ctx.save();ctx.shadowColor='rgba(0,0,0,0.7)';ctx.shadowBlur=10;
-    ctx.fillStyle=playerScore>=25?'#00ff00':'#ff6b6b';
-    ctx.font='bold 28px Arial';ctx.textAlign='center';
-    ctx.fillText(winn,c.width/2,c.height-20);
-    ctx.restore();
-  }
 }
 
-document.addEventListener('keydown',(e)=>{
-  const key=parseInt(e.key);
-  if(key>=1&&key<=6){selectedPlayer=key-1;}
-});
-
-c.addEventListener('mousemove',(e)=>{
-  const rect=c.getBoundingClientRect();
-  mouseX=e.clientX-rect.left;
-  mouseY=e.clientY-rect.top;
-});
-
-c.addEventListener('click',(e)=>{
-  const rect=c.getBoundingClientRect();
-  const mx=e.clientX-rect.left;const my=e.clientY-rect.top;
-  
-  if(gameState==='serve'){gameState='play';ballInPlay=true;serve();return;}
-  
-  playerTeam.forEach((p,i)=>{
-    const dist=Math.hypot(p.x-mx,p.y-my);
-    if(dist<30){selectedPlayer=i;spike();}
-  });
-});
-
-function serve(){
-  if(servingTeam==='player'){
-    ball.x=playerTeam[5].x;ball.y=playerTeam[5].y-30;
-    ball.dx=Math.random()*2-1;ball.dy=-6;
-  }else{
-    ball.x=oppTeam[5].x;ball.y=oppTeam[5].y+30;
-    ball.dx=Math.random()*2-1;ball.dy=6;
-  }
-}
-
-function spike(){
-  const p=playerTeam[selectedPlayer];
-  const dist=Math.hypot(ball.x-p.x,ball.y-p.y);
-  if(dist<30){
-    const now=Date.now();
-    const power=now-lastHitTime<300?2.8:2.0;
-    lastHitTime=now;
-    const ang=Math.atan2(ball.y-p.y,ball.x-p.x);
-    ball.dx=Math.cos(ang)*12*power;ball.dy=Math.sin(ang)*9*power-2;
-  }
-}
-
-function moveSelectedPlayer(){
-  const p=playerTeam[selectedPlayer];
-  const dx=mouseX-p.x;const dy=mouseY-p.y;
-  const dist=Math.hypot(dx,dy);
-  if(dist>2){
-    p.x+=dx/dist*4.5;p.y+=dy/dist*4.5;
-  }
-  p.x=Math.max(50,Math.min(p.x,c.width-50));
-  p.y=Math.max(NET_Y+15,Math.min(p.y,c.height-50));
-}
-
-function moveAI(){
+function resetGame(){
+  player.x=80;player.y=420;player.dx=0;player.dy=0;player.onGround=false;
+  score=0;gameState='play';
+  coins.forEach(coin=>coin.collected=false);
 }
 
 function update(){
-  if(!ballInPlay)return;
-  ball.x+=ball.dx;ball.y+=ball.dy;ball.dy+=0.35;
-  if(ball.x-ball.r<50||ball.x+ball.r>c.width-50)ball.dx*=-0.95;
-  
-  playerTeam.forEach(p=>{
-    const dist=Math.hypot(ball.x-p.x,ball.y-p.y);
-    if(dist<ball.r+60){spike();}}
-  });
-  
-  oppTeam.forEach(p=>{
-    const dist=Math.hypot(ball.x-p.x,ball.y-p.y);
-    if(dist<ball.r+60){
-      const ang=Math.atan2(ball.y-p.y,ball.x-p.x);
-      ball.dx=Math.cos(ang)*9;ball.dy=-Math.sin(ang)*7+1.5;
+  if(gameState!=='play')return;
+  player.dx = keys.left ? -4 : keys.right ? 4 : 0;
+  if(keys.jump && player.onGround){player.dy=-11;player.onGround=false;}
+  player.dy += gravity;
+  player.x += player.dx;
+  player.y += player.dy;
+
+  player.x = clamp(player.x,0,c.width-player.w);
+  if(player.y > c.height){gameState='lose';}
+
+  player.onGround=false;
+  platforms.forEach(pl=>{
+    if(player.x + player.w > pl.x && player.x < pl.x + pl.w && player.y + player.h > pl.y && player.y + player.h < pl.y + pl.h + 15 && player.dy >=0){
+      if(player.y + player.h > pl.y && player.y + player.h - player.dy <= pl.y){
+        player.y = pl.y - player.h;
+        player.dy = 0;
+        player.onGround = true;
+      }
     }
   });
-  
-  if(ball.y<40){playerScore++;resetRally();}
-  if(ball.y>c.height-40){oppScore++;resetRally();}
-  if(playerScore>=25||oppScore>=25){gameState='end';ballInPlay=false;}
-  
-  moveSelectedPlayer();moveAI();
-}
 
-function resetRally(){
-  gameState='serve';ballInPlay=false;
-  servingTeam=servingTeam==='player'?'opp':'player';
-  ball.x=c.width/2;ball.y=c.height/2;
-  ball.dx=0;ball.dy=0;
+  coins.forEach(coin=>{
+    if(!coin.collected && player.x < coin.x+10 && player.x+player.w > coin.x-10 && player.y < coin.y+10 && player.y+player.h > coin.y-10){
+      coin.collected = true; score += 1;
+    }
+  });
+
+  if(player.x < goal.x + goal.w && player.x + player.w > goal.x && player.y < goal.y + goal.h && player.y + player.h > goal.y){
+    gameState = score === totalCoins ? 'win' : 'finish';
+  }
 }
 
 function draw(){
-  drawCourt();drawTeams();drawBall();drawScore();update();requestAnimationFrame(draw);
+  drawBackground();
+  drawPlatforms();
+  drawCoins();
+  drawGoal();
+  drawPlayer();
+  drawUI();
+
+  if(gameState==='win'){drawMessage('You Win! All stars collected.');}
+  else if(gameState==='finish'){drawMessage('Collect all stars before you finish!');}
+  else if(gameState==='lose'){drawMessage('You fell! Try again.');}
+
+  update();
+  requestAnimationFrame(draw);
 }
-serve();resetRally();
+
+function bindInput(){
+  window.addEventListener('keydown',e=>{
+    if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){keys.left=true;}
+    if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){keys.right=true;}
+    if(e.key===' '||e.key==='ArrowUp'||e.key==='w'||e.key==='W'){keys.jump=true;}
+  });
+  window.addEventListener('keyup',e=>{
+    if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){keys.left=false;}
+    if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){keys.right=false;}
+    if(e.key===' '||e.key==='ArrowUp'||e.key==='w'||e.key==='W'){keys.jump=false;}
+  });
+  c.addEventListener('click',()=>{if(gameState!=='play'){resetGame();}});
+}
+
+bindInput();
+resetGame();
 draw();</textarea>
         </div>
       </div>
