@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>How to Make a Website - Interactive Tutorial</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-top">
+        <h1 class="hero-title">Build a Website — Step by Step</h1>
+        <div class="hero-actions">
+          <button id="themeToggle" class="icon">🌓</button>
+        </div>
+      </div>
+      <p class="hero-sub">A friendly, interactive tutorial that guides you from a plain Notepad file to a live site on the web — hands-on, fast, and fun.</p>
+      <div class="hero-cta">
+        <button id="startBtn" class="neon">Start Tutorial</button>
+        <button id="loadExampleBtn" class="ghost">Load Example</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="tutorial">
+      <div class="accordion">
+        <details open>
+          <summary><strong>1 — Create an HTML file</strong></summary>
+          <p>Open Notepad (or your favorite editor). Start with this basic HTML structure:</p>
+          <pre>&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;My Site&lt;/title&gt;&lt;/head&gt;
+  &lt;body&gt;&lt;/body&gt;
+&lt;/html&gt;</pre>
+          <p>Save it as <code>index.html</code>. This is the page visitors will open in their browser.</p>
+          <p>Anything you want to appear on the page goes inside the <body> section. For example:</p>
+          <pre>&lt;main&gt;
+  &lt;h1&gt;Hello, World!&lt;/h1&gt;
+  &lt;p&gt;This is a simple paragraph.&lt;/p&gt;
+&lt;/main&gt;</pre>
+<p> <code>&lt;h1&gt;</code> creates a large heading</p> 
+<p> <code>&lt;p&gt;</code> creates a paragraph </p>
+<p> After saving, double-click the index.html file to open it in your web browser and view yours webpage.</p>
+        </details>
+
+        <details>
+          <summary><strong>2 — Add JavaScript</strong></summary>
+          <p>JavaScript adds interactivity to your website. Create a new file called script.js and connect it to your HTML file by adding this line right before the closing <code>&lt;/body&gt;</code> tag:</p>
+          <pre>&lt;script src="script.js"&gt;&lt;/script&gt;</pre>
+          <p>Example:</p>
+          <pre>
+        &lt;body&gt;
+            &lt;h1&gt;Welcome to my site&lt;/h1&gt;
+
+            &lt;script src="script.js"&gt;&lt;/script&gt;
+         &lt;/body&gt;
+          </pre>
+          <p>Now you can add JavaScript code inside script.js.</p>
+          <p> For example:</p>
+          <pre>
+const greetBtn = document.getElementById('greetBtn');
+
+greetBtn.addEventListener('click', () => {
+  alert('Hello, World!');
+});
+          </pre>
+          <p>When the page opens, a popup message will appear.</p>
+          <p>JavaScript can be used to respond to button clicks, change text or images on the page, fetch data from a server/backend, and update the page dynamically without reloading it, update the page dynamically without reloading it and many other things.</p>
+        </details>
+
+        <details>
+          <summary><strong>3 — Add CSS</strong></summary>
+          <p>CSS controls the appearance of your website.</p>
+        <p>Create a file called styles.css and link it inside the &lt;head&gt; section of your HTML file using:</p>
+          <pre>&lt;link rel="stylesheet" href="styles.css"&gt;</pre>
+            <p>Example:</p>
+            <pre>
+&lt;head&gt;    
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;My Site&lt;/title&gt;
+    &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;
+            </pre>
+            <p>Now you can add styles inside styles.css. For example:</p>
+          <pre>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f7fb;
+  margin: 20px;
+}
+
+h1 { 
+  color: #0f1724;
+}</pre>
+          <p>This changes the page font, background color, spacing, and heading color.</p>
+          <p>Start with simple styling like fonts, colors, spacing and margins.</p>
+          <p>Then gradually add layout and responsive design rules so your site looks good on different screen sizes.</p>
+        </details>
+
+        <details>
+          <summary><strong>4 — Connect files</strong></summary>
+          <p>HTML, CSS, and JavaScript work together to build a complete website.</p>
+           <p>The browser first loads the HTML structure, then applies CSS styling, and finally runs JavaScript for interactivity.</p>
+           <p>A common setup looks like this:</p>
+           <!doctype html>
+<pre>&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;My Site&lt;/title&gt;
+
+    <!-- CSS file -->
+    &lt;link rel="stylesheet" href="styles.css"&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;h1&gt;Welcome to My Website&lt;/h1&gt;
+    &lt;p&gt;This is my first webpage.&lt;/p&gt;
+
+    <!-- JavaScript file -->
+    &lt;script src="script.js"&gt;&lt;/script&gt;      
+  &lt;/body&gt;
+&lt;/html&gt;x</pre>
+          <ul>
+            <li>Always place CSS links in <code>&lt;head&gt;</code>.</li>
+            <li>Always place JS at the end of <code>&lt;body&gt;</code> or use <code>defer</code>.</li>
+          </ul>
+          <p>You can also load JavaScript from <head> using defer:</p>
+          <pre>&lt;script src="script.js" defer&gt;&lt;/script&gt;</pre>
+          <p>The defer attribute tells the browser to wait until the HTML finishes loading before running the script.</p>
+        </details>
+
+        <details>
+          <summary><strong>5 — Backend & Data</strong></summary>
+          <p>A backend handles things like user accounts, databases, and application logic. A common beginner setup uses Node.js with Express to create a web server.</p>
+          <p>For simple demos, user data can be stored in a file like users.json, although real applications usually use a database.</p>
+        <p>Basic backend features often include:</p><ul>
+            <li>a /register endpoint to create accounts</li>
+            <li>a /login endpoint to sign users in</li>
+            <li>input validation to check usernames, emails, and passwords</li>
+            <li>sending responses back to the frontend</li>
+        </ul>
+        <p>Example Express server:</p>
+    <pre>
+const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+app.post("/register", (req, res) => {
+  res.send("User registered");
+});
+
+app.post("/login", (req, res) => {
+  res.send("User logged in");
+});
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+         </pre>
+<p>For real projects:</p><ul>
+    <li>never store passwords in plain text</li>
+    <li>hash passwords using tools like bcrypt</li>
+    <li>validate and sanitize all user input</li>
+    <li>use a proper database instead of a JSON file for production apps</li>
+</ul>
+        </details>
+
+        <details>
+          <summary><strong>6 — git, npm, and localhost</strong></summary>
+          <p>Use <code>npm</code> to install dependencies and run the server locally. Use <code>git</code> to version your project and push it to GitHub.</p>
+          <p>Run locally: <code>npm install</code> then <code>npm start</code>. Visit <code>http://localhost:3000</code> to confirm the backend is running.</p>
+        </details>
+
+        <details>
+          <summary><strong>7 — Deploy</strong></summary>
+          <p>Deploy by pushing your repository to GitHub and connecting it to a host such as Render, Vercel, or Netlify. These services will build and run your site for the public.</p>
+          <p>Tip: set environment variables for secrets and use a real database before going to production.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="editor" id="editorSection">
+      <h2>Live Editors</h2>
+      <div class="editors-row">
+        <div class="panel">
+          <h3>index.html</h3>
+          <textarea id="htmlEditor"><!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>My Demo Site</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header>
+      <h1>Welcome to my demo site</h1>
+    </header>
+    <main>
+      <p id="intro">This is a demo page. Click the button to greet.</p>
+      <button id="greetBtn">Greet</button>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html></textarea>
+        </div>
+        <div class="panel">
+          <h3>styles.css</h3>
+          <textarea id="cssEditor">:root{--bg:#f4f7fb;--accent:#0b63ff;--card:#ffffff}
+body{font-family:Inter,Arial,sans-serif;margin:0;background:var(--bg);color:#0f1724}
+.hero{padding:48px 20px;background:linear-gradient(135deg,#0b63ff 0%,#4f8bff 100%);color:white}
+.hero-title{font-size:36px;margin:0 0 8px 0;font-weight:800}
+.hero-sub{opacity:0.95;margin:0 0 16px 0}
+.panel textarea{height:220px}</textarea>
+        </div>
+        <div class="panel">
+          <h3>script.js</h3>
+          <textarea id="jsEditor">document.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('greetBtn');
+  if(btn) btn.addEventListener('click', ()=> alert('Hello — you built this!'));
+});</textarea>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="previewBtn">Live Preview</button>
+        <button id="downloadZipBtn">Download Project ZIP</button>
+      </div>
+
+      <h3>Preview</h3>
+      <iframe id="previewFrame"></iframe>
+    </section>
+
+    <section class="example">
+      <h2>Example: Simple Personal Page</h2>
+      <p>This example shows a small finished site. Click <strong>Load Example</strong> to populate the editors, then preview.</p>
+      <pre class="example-snippet">&lt;h1&gt;Hi, I'm Alex&lt;/h1&gt;
+&lt;p&gt;I make small websites that teach people.&lt;/p&gt;</pre>
+      <div class="example-cta">
+        <button id="openExampleNewTab">Open Example in New Tab</button>
+      </div>
+    </section>
+
+    <section class="game-maker" id="gameSection">
+      <h2>🎮 Build a Game — Mini Volleyball</h2>
+      <p>Edit the code below to create or modify a simple volleyball game. See your changes live in the preview.</p>
+      <div class="editors-row">
+        <div class="panel">
+          <h3>Game HTML</h3>
+          <textarea id="gameHtmlEditor">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;Volleyball Legends&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;canvas id="gameCanvas"&gt;&lt;/canvas&gt;
+    &lt;div id=\"info\"&gt;Click to serve! Rapid clicks spike. Yellow team bottom. Positions: 1,2,3 front row (near net), 4,5,6 back row. First to 25 wins!&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</textarea>
+        </div>
+        <div class="panel">
+          <h3>Game CSS</h3>
+          <textarea id="gameCssEditor">body{margin:0;padding:0;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#0d2818 0%,#051108 100%)}
+canvas{border:4px solid #ffcc00;background:#1a4d2e;cursor:crosshair;margin-bottom:12px;box-shadow:0 0 20px rgba(255,204,0,0.3)}
+#info{color:#ffcc00;font-size:13px;font-weight:bold;text-align:center;max-width:700px;line-height:1.5}</textarea>
+        </div>
+        <div class="panel">
+          <h3>Game JS</h3>
+          <textarea id="gameJsEditor">const c=document.getElementById('gameCanvas');
+const ctx=c.getContext('2d');
+c.width=800;c.height=550;
+const NET_Y=c.height/2-10;
+
+let ball={x:400,y:150,r:9,dx:0,dy:0};
+let playerTeam=[{x:250,y:380,num:1},{x:400,y:320,num:2},{x:550,y:320,num:3},{x:250,y:480,num:4},{x:400,y:480,num:5},{x:550,y:480,num:6}];
+let oppTeam=[{x:250,y:70,num:1},{x:400,y:130,num:2},{x:550,y:130,num:3},{x:250,y:20,num:4},{x:400,y:20,num:5},{x:550,y:20,num:6}];
+let playerScore=0,oppScore=0;
+let mouseX=400,mouseY=480;
+let selectedPlayer=0;
+let gameState='serve';let servingTeam='player';
+let ballInPlay=false;
+let lastHitTime=0;
+
+function drawCourt(){
+  ctx.fillStyle='#1a4d2e';ctx.fillRect(0,0,c.width,c.height);
+  ctx.strokeStyle='#fff';ctx.lineWidth=3;
+  ctx.strokeRect(40,40,c.width-80,c.height-80);
+  ctx.lineWidth=2;
+  ctx.strokeRect(40,40,c.width-80,(c.height-80)/2);
+  ctx.strokeRect(40,40+(c.height-80)/2,c.width-80,(c.height-80)/2);
+  
+  ctx.setLineDash([8,8]);ctx.lineWidth=2;ctx.strokeStyle='rgba(255,255,255,0.4)';
+  ctx.moveTo(40,NET_Y);ctx.lineTo(c.width-40,NET_Y);ctx.stroke();ctx.setLineDash([]);
+  
+  ctx.fillStyle='rgba(255,255,255,0.1)';
+  for(let i=40;i<c.width-40;i+=60)ctx.fillRect(i,NET_Y-4,30,8);
+}
+
+function drawTeams(){
+  ctx.fillStyle='#ffcc00';
+  playerTeam.forEach((p,i)=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,20,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#000';ctx.font='bold 14px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(p.num,p.x,p.y);ctx.fillStyle='#ffcc00';
+  });
+  ctx.fillStyle='#ff6b6b';
+  oppTeam.forEach((p,i)=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,20,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#000';ctx.font='bold 14px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(p.num,p.x,p.y);ctx.fillStyle='#ff6b6b';
+  });
+  ctx.lineWidth=4;ctx.strokeStyle='#ffff00';
+  ctx.beginPath();ctx.arc(playerTeam[selectedPlayer].x,playerTeam[selectedPlayer].y,26,0,Math.PI*2);ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,0,0.4)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(playerTeam[selectedPlayer].x,playerTeam[selectedPlayer].y,32,0,Math.PI*2);ctx.stroke();
+}
+
+function drawBall(){
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=1;
+  for(let i=0;i<4;i++){ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r+2+i,0,Math.PI*2);ctx.stroke();}
+}
+
+function drawScore(){
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,0.8)';ctx.shadowBlur=8;ctx.shadowOffsetX=2;ctx.shadowOffsetY=2;
+  ctx.fillStyle='#1a1a1a';ctx.fillRect(c.width/2-120,10,240,70);
+  ctx.strokeStyle='#ffcc00';ctx.lineWidth=2;ctx.strokeRect(c.width/2-120,10,240,70);
+  ctx.restore();
+  
+  ctx.fillStyle='#ffcc00';ctx.font='bold 14px Arial';ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText('YOU',c.width/2-110,18);
+  ctx.fillStyle='#ff6b6b';ctx.fillText('OPPONENT',c.width/2+40,18);
+  
+  ctx.fillStyle='#ffcc00';ctx.font='bold 36px Arial';ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(playerScore,c.width/2-40,32);
+  ctx.fillStyle='#888';ctx.font='bold 28px Arial';
+  ctx.fillText(':',c.width/2,40);
+  ctx.fillStyle='#ff6b6b';ctx.font='bold 36px Arial';
+  ctx.fillText(oppScore,c.width/2+50,32);
+  
+  if(gameState==='serve'){
+    ctx.save();ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=6;
+    ctx.fillStyle=servingTeam==='player'?'#ffcc00':'#ff6b6b';
+    ctx.font='bold 16px Arial';ctx.textAlign='center';
+    const servText=servingTeam==='player'?'🟡 YOUR SERVE':'🔴 OPPONENT SERVES';
+    ctx.fillText(servText,c.width/2,c.height-55);
+    ctx.restore();
+  }
+  
+  const winn=playerScore>=25?'⭐ YOU WIN! ⭐':oppScore>=25?'💔 YOU LOSE':''; 
+  if(winn){
+    ctx.save();ctx.shadowColor='rgba(0,0,0,0.7)';ctx.shadowBlur=10;
+    ctx.fillStyle=playerScore>=25?'#00ff00':'#ff6b6b';
+    ctx.font='bold 28px Arial';ctx.textAlign='center';
+    ctx.fillText(winn,c.width/2,c.height-20);
+    ctx.restore();
+  }
+}
+
+document.addEventListener('keydown',(e)=>{
+  const key=parseInt(e.key);
+  if(key>=1&&key<=6){selectedPlayer=key-1;}
+});
+
+c.addEventListener('mousemove',(e)=>{
+  const rect=c.getBoundingClientRect();
+  mouseX=e.clientX-rect.left;
+  mouseY=e.clientY-rect.top;
+});
+
+c.addEventListener('click',(e)=>{
+  const rect=c.getBoundingClientRect();
+  const mx=e.clientX-rect.left;const my=e.clientY-rect.top;
+  
+  if(gameState==='serve'){gameState='play';ballInPlay=true;serve();return;}
+  
+  playerTeam.forEach((p,i)=>{
+    const dist=Math.hypot(p.x-mx,p.y-my);
+    if(dist<30){selectedPlayer=i;spike();}
+  });
+});
+
+function serve(){
+  if(servingTeam==='player'){
+    ball.x=playerTeam[5].x;ball.y=playerTeam[5].y-30;
+    ball.dx=Math.random()*2-1;ball.dy=-6;
+  }else{
+    ball.x=oppTeam[5].x;ball.y=oppTeam[5].y+30;
+    ball.dx=Math.random()*2-1;ball.dy=6;
+  }
+}
+
+function spike(){
+  const p=playerTeam[selectedPlayer];
+  const dist=Math.hypot(ball.x-p.x,ball.y-p.y);
+  if(dist<30){
+    const now=Date.now();
+    const power=now-lastHitTime<300?2.8:2.0;
+    lastHitTime=now;
+    const ang=Math.atan2(ball.y-p.y,ball.x-p.x);
+    ball.dx=Math.cos(ang)*12*power;ball.dy=Math.sin(ang)*9*power-2;
+  }
+}
+
+function moveSelectedPlayer(){
+  const p=playerTeam[selectedPlayer];
+  const dx=mouseX-p.x;const dy=mouseY-p.y;
+  const dist=Math.hypot(dx,dy);
+  if(dist>2){
+    p.x+=dx/dist*4.5;p.y+=dy/dist*4.5;
+  }
+  p.x=Math.max(50,Math.min(p.x,c.width-50));
+  p.y=Math.max(NET_Y+15,Math.min(p.y,c.height-50));
+}
+
+function moveAI(){
+}
+
+function update(){
+  if(!ballInPlay)return;
+  ball.x+=ball.dx;ball.y+=ball.dy;ball.dy+=0.35;
+  if(ball.x-ball.r<50||ball.x+ball.r>c.width-50)ball.dx*=-0.95;
+  
+  playerTeam.forEach(p=>{
+    const dist=Math.hypot(ball.x-p.x,ball.y-p.y);
+    if(dist<ball.r+20){spike();}
+  });
+  
+  oppTeam.forEach(p=>{
+    const dist=Math.hypot(ball.x-p.x,ball.y-p.y);
+    if(dist<ball.r+20){
+      const ang=Math.atan2(ball.y-p.y,ball.x-p.x);
+      ball.dx=Math.cos(ang)*9;ball.dy=-Math.sin(ang)*7+1.5;
+    }
+  });
+  
+  if(ball.y<40){playerScore++;resetRally();}
+  if(ball.y>c.height-40){oppScore++;resetRally();}
+  if(playerScore>=25||oppScore>=25){gameState='end';ballInPlay=false;}
+  
+  moveSelectedPlayer();moveAI();
+}
+
+function resetRally(){
+  gameState='serve';ballInPlay=false;
+  servingTeam=servingTeam==='player'?'opp':'player';
+  ball.x=c.width/2;ball.y=c.height/2;
+  ball.dx=0;ball.dy=0;
+}
+
+function draw(){
+  drawCourt();drawTeams();drawBall();drawScore();update();requestAnimationFrame(draw);
+}
+serve();resetRally();
+draw();</textarea>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="gamePreviewBtn">Update Game Preview</button>
+      </div>
+
+      <h3>Play the Game</h3>
+      <iframe id="gameFrame"></iframe>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
