@@ -170,14 +170,49 @@ app.listen(3000, () => {
 
         <details>
           <summary><strong>6 — git, npm, and localhost</strong></summary>
-          <p>Use <code>npm</code> to install dependencies and run the server locally. Use <code>git</code> to version your project and push it to GitHub.</p>
-          <p>Run locally: <code>npm install</code> then <code>npm start</code>. Visit <code>http://localhost:3000</code> to confirm the backend is running.</p>
+          <p>Use npm to install the packages your project needs and run the backend locally. Most Node.js projects include a package.json file that defines dependencies and startup commands.</p>
+          <p>Open command prompt and set it to your project folder and run:</p>
+          <pre>npm install
+npm start</pre>
+          <p>This installs dependencies and starts the server. You can then open <code>http://localhost:3000</code> in your browser to see your site running locally. You should see your app or backend response running locally.</p>
+          <p>Use git to track changes to your code and push it to GitHub for version control and collaboration.</p>
+          <p>Basic Git setup:</p>
+          <pre>git init
+git add .
+git commit -m "Initial commit"
+</pre>
+<p>After creating a GitHub repository, connect your project and upload it:</p>
+<pre>
+git remote add origin YOUR_REPOSITORY_URL
+git push -u origin main
+</pre>
+<p>Replace the <code>YOUR_REPOSITORY_URL</code> with the actual URL of your GitHub repository.</p>
+<p>After that, future commits can be pushed with:</p>
+<pre>
+git add .
+git commit -m "Your commit message"
+git push
+</pre>
+
         </details>
 
         <details>
           <summary><strong>7 — Deploy</strong></summary>
-          <p>Deploy by pushing your repository to GitHub and connecting it to a host such as Render, Vercel, or Netlify. These services will build and run your site for the public.</p>
-          <p>Tip: set environment variables for secrets and use a real database before going to production.</p>
+          <p>Deploy your website by pushing your project to GitHub and connecting the repository to a hosting service such as:</p>
+          <ul>
+            <li>Render</li>
+            <li>Vercel</li>
+            <li>Netlify</li>
+          </ul>
+          <p>These platforms can automatically:</p>
+          <ul>
+            <li>build your project when you push changes to GitHub</li>
+            <li>deploy your site to a live URL</li>
+            <li>provide custom domains and SSL certificates</li>
+            <li>install dependencies automatically</li>
+          </ul>
+          <p>After deployment, the service gives you a public URL for your website.</p>
+          <p>Most importantly enable HTTPS and proper authentication/security settings to ensure a trusted website.</p>
         </details>
       </div>
     </section>
@@ -297,6 +332,14 @@ const keys={left:false,right:false,jump:false};
 let score=0;
 const totalCoins=coins.length;
 let gameState='play';
+let timerActive=false;
+let timerStart=0;
+let timerElapsed=0;
+let bestTime=null;
+const storedBest = sessionStorage.getItem('platformerBestTime');
+if(storedBest){
+  bestTime = parseFloat(storedBest);
+}
 
 function clamp(value,min,max){return Math.max(min,Math.min(value,max));}
 
@@ -352,7 +395,7 @@ function drawUI(){
   const boxX = 14;
   const boxY = 14;
   const boxW = 260;
-  const boxH = 70;
+  const boxH = 98;
   ctx.fillStyle='rgba(5,14,24,0.8)';
   ctx.fillRect(boxX,boxY,boxW,boxH);
   ctx.strokeStyle='#50e3c2';ctx.lineWidth=2;
@@ -361,7 +404,9 @@ function drawUI(){
   ctx.textAlign='left';
   ctx.textBaseline='top';
   ctx.fillText('Volleyballs: '+score+'/'+totalCoins,boxX+10,boxY+10);
-  ctx.fillText('Goal: Reach the flag',boxX+10,boxY+36);
+  ctx.fillText('Goal: Reach the flag',boxX+10,boxY+34);
+  ctx.fillText('Time: '+(timerElapsed/1000).toFixed(2)+'s',boxX+10,boxY+58);
+  ctx.fillText('Best: '+(bestTime !== null ? (bestTime/1000).toFixed(2) : '--.--')+'s',boxX+10,boxY+78);
 }
 
 function drawMessage(text){
@@ -395,10 +440,15 @@ function drawMessage(text){
 function resetGame(){
   player.x=80;player.y=420;player.dx=0;player.dy=0;player.onGround=false;
   score=0;gameState='play';
+  timerActive=false;timerStart=0;timerElapsed=0;
   coins.forEach(coin=>coin.collected=false);
 }
 
 function update(){
+  if(timerActive && gameState==='play'){
+    timerElapsed = Date.now() - timerStart;
+  }
+
   if(gameState!=='play')return;
   player.dx = keys.left ? -4 : keys.right ? 4 : 0;
   if(keys.jump && player.onGround){player.dy=-11;player.onGround=false;}
@@ -407,7 +457,7 @@ function update(){
   player.y += player.dy;
 
   player.x = clamp(player.x,0,c.width-player.w);
-  if(player.y > c.height){gameState='lose';}
+  if(player.y > c.height){gameState='lose'; timerActive=false;}
 
   player.onGround=false;
   platforms.forEach(pl=>{
@@ -428,6 +478,12 @@ function update(){
 
   if(player.x < goal.x + goal.w && player.x + player.w > goal.x && player.y < goal.y + goal.h && player.y + player.h > goal.y){
     gameState = score === totalCoins ? 'win' : 'finish';
+    timerActive = false;
+    if(timerElapsed === 0 && timerStart) timerElapsed = Date.now() - timerStart;
+    if(timerElapsed > 0 && (!bestTime || timerElapsed < bestTime)){
+      bestTime = timerElapsed;
+      sessionStorage.setItem('platformerBestTime', bestTime.toString());
+    }
   }
 }
 
@@ -449,6 +505,10 @@ function draw(){
 
 function bindInput(){
   window.addEventListener('keydown',e=>{
+    if(gameState==='play' && !timerActive && (e.key==='ArrowLeft'||e.key==='a'||e.key==='A'||e.key==='ArrowRight'||e.key==='d'||e.key==='D'||e.key===' '||e.key==='ArrowUp'||e.key==='w'||e.key==='W')){
+      timerActive=true;
+      timerStart=Date.now();
+    }
     if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){keys.left=true;}
     if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){keys.right=true;}
     if(e.key===' '||e.key==='ArrowUp'||e.key==='w'||e.key==='W'){keys.jump=true;}
