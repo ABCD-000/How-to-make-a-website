@@ -336,10 +336,6 @@ let timerActive=false;
 let timerStart=0;
 let timerElapsed=0;
 let bestTime=null;
-const storedBest = sessionStorage.getItem('platformerBestTime');
-if(storedBest){
-  bestTime = parseFloat(storedBest);
-}
 
 function clamp(value,min,max){return Math.max(min,Math.min(value,max));}
 
@@ -482,7 +478,6 @@ function update(){
     if(timerElapsed === 0 && timerStart) timerElapsed = Date.now() - timerStart;
     if(timerElapsed > 0 && (!bestTime || timerElapsed < bestTime)){
       bestTime = timerElapsed;
-      sessionStorage.setItem('platformerBestTime', bestTime.toString());
     }
   }
 }
